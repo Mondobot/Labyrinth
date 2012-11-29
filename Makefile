@@ -6,14 +6,14 @@ INCLUDEFLAGS=-Iinclude
 SOURCES=$(patsubst src/%, %, $(wildcard src/*.cpp))
 OBJECTS=$(addprefix bin/, $(addsuffix .o, $(basename ${SOURCES})))
 
-EXECUTABLE=labirynth
+EXECUTABLE=labyrinth
 
 CFLAGS+= -g -DDEBUG
 
 build: $(OBJECTS) $(EXECUTABLE)
 
 run:
-	./labyrinth
+	./labyrinth input
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC)  $(OBJECTS) -o $@ $(LDFLAGS)

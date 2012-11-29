@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-
+#include "maze_game.h"
 
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
@@ -13,10 +13,10 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	MazeGame game = new MazeGame();
+	MazeGame game(argv[1]);
 
-	game.init();
-	game.run();
+	game.Init();
+	//game.Run();
 
 	return 0;
 }
