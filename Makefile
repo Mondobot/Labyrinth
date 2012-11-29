@@ -6,14 +6,14 @@ INCLUDEFLAGS=-Iinclude
 SOURCES=$(patsubst src/%, %, $(wildcard src/*.cpp))
 OBJECTS=$(addprefix bin/, $(addsuffix .o, $(basename ${SOURCES})))
 
-EXECUTABLE=rubik
+EXECUTABLE=labirynth
 
 CFLAGS+= -g -DDEBUG
 
 build: $(OBJECTS) $(EXECUTABLE)
 
 run:
-	./rubik
+	./labyrinth
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC)  $(OBJECTS) -o $@ $(LDFLAGS)
