@@ -25,6 +25,7 @@ class MazeGame {
 		char *input_file_;
 		char **actual_maze_;
 		int maze_size_;
+		static GLdouble fine_spacing_;
 		static GLdouble cube_size_;
 		static const char name_[];
 };

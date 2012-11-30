@@ -3,8 +3,8 @@
 #include "display.h"
 
 MazeGame * GlutEngine::game_ = NULL;
-int GlutEngine::fov_angle = 60;
-int GlutEngine::near_plane = 0.1;
+int GlutEngine::fov_angle = 45;
+int GlutEngine::near_plane = 1;
 int GlutEngine::far_plane = 1000;
 
 GlutEngine::GlutEngine(MazeGame *game) {
@@ -40,6 +40,8 @@ void GlutEngine::RenderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	game_->RenderSelf();
+
+	gluLookAt(0, 10, 0, 4, 0, -4, 4, 3, -4);
 
 	glutSwapBuffers();
 }

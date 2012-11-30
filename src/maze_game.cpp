@@ -8,6 +8,7 @@
 #include "maze_game.h"
 
 GLdouble MazeGame::cube_size_ = 1.5;
+GLdouble MazeGame::fine_spacing_ = 0.01;
 
 MazeGame::MazeGame(std::string input_file) {
 	this->input_file_ = new char [input_file.size() + 1];
@@ -51,24 +52,33 @@ void MazeGame::ReadData() {
 }
 
 void MazeGame::RenderSelf(void) {
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
 	for (int i = 0; i < this->maze_size_; ++i)
 		for (int j = 0; j < this->maze_size_; ++j) {
 			glPushMatrix();
 
 			GLdouble y_coord = cube_size_ / 2;
-			if (this->actual_maze_[i][j] == '.')
+			//glColor3f(0.3f, 0.2f, 0.6f);
+			glColor3f(0.6f, 0.4f, 0.3f);
+
+
+			if (this->actual_maze_[i][j] == '.') {
 				y_coord *= -1;
+			//	glColor3f(0.6f, 0.4f, 0.3f);
+				glColor3f(0.3f, 0.2f, 0.6f);
+			}
 
-			glTranslatef(j * cube_size_, y_coord, i * cube_size_);
+			glTranslatef(j * cube_size_, y_coord, -i * cube_size_);
 
-			glutSolidCube(cube_size_);
+			glutSolidCube(cube_size_ - fine_spacing_);
+
+			//glColor3f(1.0, 1.0, 1.0);
+			glColor3f(0, 0, 0);
+			glutWireCube(cube_size_);
 
 			glPopMatrix();
 		}
 
-	glutSwapBuffers();
 /*
 	glBegin(GL_TRIANGLES);
 		glVertex3f(2.0, 0.0, -6.0);
