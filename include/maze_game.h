@@ -17,7 +17,6 @@ class MazeGame {
 		const char* name() const;
 		GLdouble maze_size() const;
 
-
 	private:
 		void ReadData();
 		void PlacePlayer();
