@@ -1,6 +1,7 @@
 /*
  * Includes go here
  */
+#include <GL/glut.h>
 #include <string.h>
 #include <iostream>
 #include <fstream>
@@ -50,6 +51,11 @@ void MazeGame::ReadData() {
 }
 
 void MazeGame::RenderSelf(void) {
+	glBegin(GL_TRIANGLES);
+		glVertex3f(2.0, 0.0, -6.0);
+		glVertex3f(-2.0, 0.0, -6.0);
+		glVertex3f(0.0, 2.0, -6.0);
+	glEnd();
 }
 
 const char MazeGame::name_[] = "Labyrinth";

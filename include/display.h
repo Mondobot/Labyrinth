@@ -16,11 +16,15 @@ class GlutEngine {
 
 	private:
 		static void RenderScene();
+		static void ResizeScene(int width, int height);
 
 		static const int kWindowPosX = -1;
 		static const int kWindowPosY = -1;
 		static const int kWindowSizeX = 800;
 		static const int kWindowSizeY = 650;
+		static int fov_angle;
+		static int near_plane;
+		static int far_plane;
 		static MazeGame *game_;
 };
 
