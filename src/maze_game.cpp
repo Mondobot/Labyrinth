@@ -1,13 +1,13 @@
 /*
  * Includes go here
  */
-#include <GL/glut.h>
 #include <string.h>
 #include <iostream>
 #include <fstream>
 
 #include "maze_game.h"
 
+GLdouble MazeGame::cube_size_ = 1.5;
 
 MazeGame::MazeGame(std::string input_file) {
 	this->input_file_ = new char [input_file.size() + 1];
@@ -51,11 +51,31 @@ void MazeGame::ReadData() {
 }
 
 void MazeGame::RenderSelf(void) {
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+	for (int i = 0; i < this->maze_size_; ++i)
+		for (int j = 0; j < this->maze_size_; ++j) {
+			glPushMatrix();
+
+			GLdouble y_coord = cube_size_ / 2;
+			if (this->actual_maze_[i][j] == '.')
+				y_coord *= -1;
+
+			glTranslatef(j * cube_size_, y_coord, i * cube_size_);
+
+			glutSolidCube(cube_size_);
+
+			glPopMatrix();
+		}
+
+	glutSwapBuffers();
+/*
 	glBegin(GL_TRIANGLES);
 		glVertex3f(2.0, 0.0, -6.0);
 		glVertex3f(-2.0, 0.0, -6.0);
 		glVertex3f(0.0, 2.0, -6.0);
 	glEnd();
+*/
 }
 
 const char MazeGame::name_[] = "Labyrinth";
