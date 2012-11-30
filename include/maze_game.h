@@ -3,6 +3,7 @@
  */
 #ifndef MAZE_GAME_H_
 #define MAZE_GAME_H_
+#include <string>
 
 class MazeGame {
 	public:
@@ -10,16 +11,18 @@ class MazeGame {
 		~MazeGame();
 
 		void Init();
-		void Run();
+		void RenderSelf();
+
+		const char* name() const;
 
 	private:
 		void ReadData();
-		void InitDisplay();
-		void InitObjects();
-		void InitCamera();
+		//void InitObjects();
+		//void InitCamera();
 
 		char *input_file_;
 		char **actual_maze_;
 		int maze_size_;
+		static const char name_[];
 };
 #endif	//MAZE_GAME_H_

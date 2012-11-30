@@ -20,8 +20,7 @@ MazeGame::~MazeGame() {
 void MazeGame::Init() {
 	ReadData();
 
-	InitDisplay();
-
+	//InitObjects
 	//InitCamera();
 
 	for (int i = 0; i < this->maze_size_; ++i) {
@@ -49,3 +48,10 @@ void MazeGame::ReadData() {
 
 	fin.close();
 }
+
+void MazeGame::RenderSelf(void) {
+}
+
+const char MazeGame::name_[] = "Labyrinth";
+
+const char* MazeGame::name() const { return this->name_; }

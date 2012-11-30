@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include "display.h"
 #include "maze_game.h"
 
 int main(int argc, char *argv[]) {
@@ -13,10 +14,12 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	MazeGame game(argv[1]);
+	MazeGame *game = new MazeGame(argv[1]);
+	game->Init();
 
-	game.Init();
-	//game.Run();
+	GlutEngine engine(game);
+	engine.Init(argc, argv);
+	engine.Run();
 
 	return 0;
 }
