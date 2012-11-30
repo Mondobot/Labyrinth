@@ -1,14 +1,23 @@
 /*
  * Includes go here
  */
+#include <time.h>
 #include <string.h>
 #include <iostream>
 #include <fstream>
 
 #include "maze_game.h"
 
+#define BLACK 0.0f, 0.0f, 0.0f
+#define PURPLE 0.6f, 0.4f, 0.3f
+#define ORANGE 0.3f, 0.2f, 0.6f
+#define WHITE 1.0f, 1.0f, 1.0f
+
 GLdouble MazeGame::cube_size_ = 1.5;
 GLdouble MazeGame::fine_spacing_ = 0.01;
+GLdouble MazeGame::plyr_pos_x_ = -1;
+GLdouble MazeGame::plyr_pos_y_ = -1;
+const char MazeGame::name_[] = "Labyrinth";
 
 MazeGame::MazeGame(std::string input_file) {
 	this->input_file_ = new char [input_file.size() + 1];
@@ -21,9 +30,7 @@ MazeGame::~MazeGame() {
 
 void MazeGame::Init() {
 	ReadData();
-
-	//InitObjects
-	//InitCamera();
+	PlacePlayer();
 
 	for (int i = 0; i < this->maze_size_; ++i) {
 		for (int j = 0; j < this->maze_size_; ++j)
@@ -58,22 +65,21 @@ void MazeGame::RenderSelf(void) {
 			glPushMatrix();
 
 			GLdouble y_coord = cube_size_ / 2;
-			//glColor3f(0.3f, 0.2f, 0.6f);
-			glColor3f(0.6f, 0.4f, 0.3f);
+			glColor3f(PURPLE);
 
 
 			if (this->actual_maze_[i][j] == '.') {
 				y_coord *= -1;
-			//	glColor3f(0.6f, 0.4f, 0.3f);
-				glColor3f(0.3f, 0.2f, 0.6f);
+				glColor3f(ORANGE);
 			}
 
-			glTranslatef(j * cube_size_, y_coord, -i * cube_size_);
+
+			glTranslatef(j * cube_size_, y_coord, i * cube_size_);
 
 			glutSolidCube(cube_size_ - fine_spacing_);
 
-			//glColor3f(1.0, 1.0, 1.0);
-			glColor3f(0, 0, 0);
+			//glColor3f(WHITE);
+			glColor3f(BLACK);
 			glutWireCube(cube_size_);
 
 			glPopMatrix();
@@ -88,6 +94,23 @@ void MazeGame::RenderSelf(void) {
 */
 }
 
-const char MazeGame::name_[] = "Labyrinth";
+void MazeGame::PlacePlayer() {
+	srand(time(NULL));
+
+	int i, j;
+	while (plyr_pos_x_ == -1) {
+		i = rand() % this->maze_size_;
+		j = rand() % this->maze_size_;
+
+		if (this->actual_maze_[i][j] != '#') {
+			plyr_pos_x_ = i;
+			plyr_pos_y_ = j;
+		}
+	}
+
+	std::cout << plyr_pos_x_ << " " << plyr_pos_y_ << std::endl;
+}
+
+GLdouble MazeGame::maze_size() const { return this->maze_size_ * cube_size_; }
 
 const char* MazeGame::name() const { return this->name_; }

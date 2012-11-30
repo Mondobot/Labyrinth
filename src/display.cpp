@@ -6,6 +6,7 @@ MazeGame * GlutEngine::game_ = NULL;
 int GlutEngine::fov_angle = 45;
 int GlutEngine::near_plane = 1;
 int GlutEngine::far_plane = 1000;
+GlutEngine::camera_t GlutEngine::camera = OVERVIEW;
 
 GlutEngine::GlutEngine(MazeGame *game) {
 	game_ = game;
@@ -41,7 +42,8 @@ void GlutEngine::RenderScene(void) {
 
 	game_->RenderSelf();
 
-	gluLookAt(0, 10, 0, 4, 0, -4, 4, 3, -4);
+	glLoadIdentity();
+	gluLookAt(0, 10, 0, 15, 0, 15, 4, 4, 4);
 
 	glutSwapBuffers();
 }
@@ -62,4 +64,9 @@ void GlutEngine::ResizeScene(int width, int height) {
 
 	// Get Back to the Modelview
 	glMatrixMode(GL_MODELVIEW);
+
+	glLoadIdentity();
+	gluLookAt(0, 10, 0, 15, 0, 15, 4, 4, 4);
 }
+
+//void GlutEngine::SetView

@@ -8,6 +8,8 @@
 
 class GlutEngine {
 	public:
+		enum camera_t {OVERVIEW, THIRD_PERSON, FIRST_PERSON};
+
 		explicit GlutEngine(MazeGame *game);
 		~GlutEngine();
 
@@ -18,6 +20,7 @@ class GlutEngine {
 		static void RenderScene();
 		static void ResizeScene(int width, int height);
 
+		static camera_t camera;
 		static const int kWindowPosX = -1;
 		static const int kWindowPosY = -1;
 		static const int kWindowSizeX = 800;
