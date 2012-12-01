@@ -113,16 +113,23 @@ void GlutEngine::SetView() {
 			look_at.x = look_at.z = camera_->x;
 			break;
 
+		case (THIRD_PERSON):
+			camera_->x = player.x - camera_dir_->x * 3.0f;
+			camera_->y = player.y - camera_dir_->y * 5.0f;
+			camera_->z = player.z - camera_dir_->z * 3.0f;
+
+			look_at.x = player.x;
+			look_at.y = player.y;
+			look_at.z = player.z;
+
+			up.x = up.z = 0;
+			up.y = 1;
+			break;
+
 		case (FIRST_PERSON):
 			camera_->x = player.x;
 			camera_->y = player.y;
 			camera_->z = player.z;
-
-			camera_dir_->x = sin(view_dir_angle_->x + delta_angle_->x) *
-							sin(view_dir_angle_->y + delta_angle_->y);
-			camera_dir_->z = -cos(view_dir_angle_->x + delta_angle_->z);
-							sin(view_dir_angle_->y + delta_angle_->y);
-			camera_dir_->y = cos(view_dir_angle_->y + delta_angle_->y);
 
 			look_at.x = player.x + camera_dir_->x;
 			look_at.y = player.y + camera_dir_->y;
@@ -150,6 +157,9 @@ void GlutEngine::SetView() {
 
 	delta_angle_->x = delta_angle_->y = delta_angle_->z = 0;
 
+//	if (camera_type == FIRST_PERSON) {
+	// TODO: Do something about these magic numbers!
+	// (or nothing, nothing's good too!)
 	if (view_dir_angle_->x > 360) {
 		view_dir_angle_->x -= 360;
 
@@ -159,7 +169,7 @@ void GlutEngine::SetView() {
 	} else if (view_dir_angle_->y > 80) {
 		view_dir_angle_->y = 80;
 	}
-
+//}
 
 	gluLookAt(camera_->x, camera_->y, camera_->z,
 			look_at.x, look_at.y, look_at.z,
@@ -225,6 +235,11 @@ void GlutEngine::UpdatePos() {
 			player.x -= delta_move_->z;
 			break;
 
+		case (THIRD_PERSON):
+			//player.x += delta_move->x * camera_dir_->x;
+			//player.z += delta_move->z * camera_dir_->z;
+			
+
 		case (FIRST_PERSON):
 			player.x += delta_move_->x * camera_dir_->x;
 			player.z += delta_move_->x * camera_dir_->z;
@@ -248,9 +263,12 @@ void GlutEngine::MouseMove(int x, int y) {
 	switch (camera_type) {
 		case (OVERVIEW):
 			break;
+
+		case (THIRD_PERSON):
+
 		case (FIRST_PERSON):
 			delta_angle_->x = (x - orig_coords_mouse_->x) * 0.005f;
-			delta_angle_->y = (y - orig_coords_mouse_->y) * 0.007f;
+			delta_angle_->y = (y - orig_coords_mouse_->y) * 0.005f;
 
 			//	std::cout << x - orig_coords_mouse_->x << " <----------> ";
 			//	std::cout << y - orig_coords_mouse_->y << std::endl;
@@ -276,6 +294,21 @@ void GlutEngine::MouseMove(int x, int y) {
 
 			//		kkt = 0;
 			}
+			camera_dir_->x = sin(view_dir_angle_->x + delta_angle_->x) *
+							sin(view_dir_angle_->y + delta_angle_->y);
+			camera_dir_->z = -cos(view_dir_angle_->x + delta_angle_->z) *
+							sin(view_dir_angle_->y + delta_angle_->y);
+			camera_dir_->y = cos(view_dir_angle_->y + delta_angle_->y);
+
+			if (camera_dir_->x > 10)
+				camera_dir_->x -= 10;
+
+			if (camera_dir_->y > 10)
+				camera_dir_->y -= 10;
+
+			if (camera_dir_->z > 10)
+				camera_dir_->z -= 10;
+
 			break;
 	}
 

@@ -85,9 +85,9 @@ void MazeGame::RenderSelf(void) {
 
 	// Draw the player
 	glPushMatrix();
-	glTranslatef(player_->x * cube_size_, player_->y, player_->z * cube_size_);
+	glTranslatef(player_->x, player_->y, player_->z);
 	glColor3f(BLACK);
-	glutSolidSphere(cube_size_ / 3, 5, 5);
+	glutSolidSphere(cube_size_ / 5, 20, 20);
 	glPopMatrix();
 
 	std::cout << "player: " << player_->x << " " << player_->y << " " << player_->z << std::endl;
@@ -112,8 +112,8 @@ void MazeGame::PlacePlayer() {
 		j = rand() % this->maze_size_;
 
 		if (this->actual_maze_[i][j] != '#') {
-			player_->x = i;
-			player_->z = j;
+			player_->x = i * cube_size_;
+			player_->z = j * cube_size_;
 		}
 	}
 
