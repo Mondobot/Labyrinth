@@ -15,7 +15,7 @@
 
 GLdouble MazeGame::cube_size_ = 1.5;
 GLdouble MazeGame::fine_spacing_ = 0.01;
-Float3 * MazeGame::player_ = new Float3(-1, 0, -1);
+Float3 * MazeGame::player_ = new Float3(-1, cube_size_ / 2.0f, -1);
 const char MazeGame::name_[] = "Labyrinth";
 
 MazeGame::MazeGame(std::string input_file) {
@@ -58,7 +58,6 @@ void MazeGame::ReadData() {
 }
 
 void MazeGame::RenderSelf(void) {
-
 	for (int i = 0; i < this->maze_size_; ++i)
 		for (int j = 0; j < this->maze_size_; ++j) {
 			glPushMatrix();
@@ -73,7 +72,7 @@ void MazeGame::RenderSelf(void) {
 			}
 
 
-			glTranslatef(j * cube_size_, y_coord, i * cube_size_);
+			glTranslatef(i * cube_size_, y_coord, j * cube_size_);
 
 			glutSolidCube(cube_size_ - fine_spacing_);
 
@@ -83,6 +82,15 @@ void MazeGame::RenderSelf(void) {
 
 			glPopMatrix();
 		}
+
+	// Draw the player
+	glPushMatrix();
+	glTranslatef(player_->x * cube_size_, player_->y, player_->z * cube_size_);
+	glColor3f(BLACK);
+	glutSolidSphere(cube_size_ / 3, 5, 5);
+	glPopMatrix();
+
+	std::cout << "player: " << player_->x << " " << player_->y << " " << player_->z << std::endl;
 
 /*
 	glBegin(GL_TRIANGLES);
@@ -110,6 +118,12 @@ void MazeGame::PlacePlayer() {
 	}
 
 	std::cout << player_->x << " " << player_->z << std::endl;
+}
+
+void MazeGame::set_player_pos(Float3 player) {
+	player_->x = player.x;
+	player_->y = player.y;
+	player_->z = player.z;
 }
 
 GLdouble MazeGame::maze_size() const { return this->maze_size_ * cube_size_; }

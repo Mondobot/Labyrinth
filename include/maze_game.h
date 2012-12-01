@@ -18,6 +18,7 @@ class MazeGame {
 		const char* name() const;
 		GLdouble maze_size() const;
 		Float3 player() const;
+		void set_player_pos(Float3 player);
 
 	private:
 		void ReadData();
