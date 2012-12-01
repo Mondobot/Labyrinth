@@ -5,11 +5,15 @@
 
 #define PI 3.14159265
 #define RAD(x) ((x) * PI / 180)
+#define WHEEL_DOWN 3
+#define WHEEL_UP 4
 
+// TODO: ALL these initialisations look like crap, clean them!
 MazeGame * GlutEngine::game_ = NULL;
 int GlutEngine::fov_angle_ = 45;
 int GlutEngine::near_plane_ = 1;
 int GlutEngine::far_plane_ = 1000;
+float GlutEngine::zoom_factor_ = 3.0f;
 
 Float3 * GlutEngine::camera_ = new Float3();
 GlutEngine::camera_t GlutEngine::camera_type = OVERVIEW;
@@ -19,7 +23,6 @@ Float3 * GlutEngine::view_dir_angle_ = new Float3();
 Float3 * GlutEngine::delta_angle_ = new Float3();
 Float3 * GlutEngine::camera_dir_ = new Float3(0, 0, 0);
 Float3 * GlutEngine::delta_move_ = new Float3();
-
 
 int GlutEngine::kkt = 0;
 int GlutEngine::window_height_ = GlutEngine::kWindowSizeY;
@@ -43,12 +46,15 @@ void GlutEngine::Init(int argc, char *argv[]) {
 	glutInitWindowSize(this->kWindowSizeX, this->kWindowSizeY);
 	glutCreateWindow(game_->name());
 
+	// TODO: Organise the callbacks 
+	// (dunno how, figure something out!)
 	// Register callbacks
 	glutDisplayFunc(RenderScene);
 	glutReshapeFunc(ResizeScene);
 	glutKeyboardFunc(KeyPress);
 	glutIdleFunc(IdleFunc);
 	glutPassiveMotionFunc(MouseMove);
+	glutMouseFunc(MouseClick);
 
 	glEnable(GL_DEPTH_TEST);
 	glutSetCursor(GLUT_CURSOR_NONE);
@@ -58,6 +64,7 @@ void GlutEngine::Run() {
 	glutMainLoop();
 }
 
+// TODO: Figure the order of these calls, looks like a mess!
 void GlutEngine::RenderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
@@ -96,6 +103,7 @@ void GlutEngine::ResizeScene(int width, int height) {
 void GlutEngine::SetView() {
 	glLoadIdentity();
 
+	// TODO: Clean up!
 	Float3 player = game_->player();
 	Float3 look_at;
 	Float3 up;
@@ -114,9 +122,9 @@ void GlutEngine::SetView() {
 			break;
 
 		case (THIRD_PERSON):
-			camera_->x = player.x - camera_dir_->x * 3.0f;
-			camera_->y = player.y - camera_dir_->y * 5.0f;
-			camera_->z = player.z - camera_dir_->z * 3.0f;
+			camera_->x = player.x - camera_dir_->x * zoom_factor_;
+			camera_->y = player.y - camera_dir_->y * (zoom_factor_ + 2);
+			camera_->z = player.z - camera_dir_->z * zoom_factor_;
 
 			look_at.x = player.x;
 			look_at.y = player.y;
@@ -235,6 +243,7 @@ void GlutEngine::UpdatePos() {
 			player.x -= delta_move_->z;
 			break;
 
+		// TODO: Looks like crap, clean it up!
 		case (THIRD_PERSON):
 			//player.x += delta_move->x * camera_dir_->x;
 			//player.z += delta_move->z * camera_dir_->z;
@@ -300,6 +309,7 @@ void GlutEngine::MouseMove(int x, int y) {
 							sin(view_dir_angle_->y + delta_angle_->y);
 			camera_dir_->y = cos(view_dir_angle_->y + delta_angle_->y);
 
+			// TODO: FIX the magic numbers
 			if (camera_dir_->x > 10)
 				camera_dir_->x -= 10;
 
@@ -311,5 +321,15 @@ void GlutEngine::MouseMove(int x, int y) {
 
 			break;
 	}
+}
 
+void GlutEngine::MouseClick(int button, int state, int x, int y) {
+	if (state == GLUT_DOWN) {
+		if (button == WHEEL_DOWN) {
+			zoom_factor_ -= 1.0f;
+
+		} else if (button == WHEEL_UP) {
+			zoom_factor_ += 1.0f;
+		}
+	}
 }

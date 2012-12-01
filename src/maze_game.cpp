@@ -57,6 +57,7 @@ void MazeGame::ReadData() {
 	fin.close();
 }
 
+// TODO: Works, but needs some cleaning
 void MazeGame::RenderSelf(void) {
 	for (int i = 0; i < this->maze_size_; ++i)
 		for (int j = 0; j < this->maze_size_; ++j) {

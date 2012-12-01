@@ -23,7 +23,6 @@ class MazeGame {
 	private:
 		void ReadData();
 		void PlacePlayer();
-		//void InitCamera();
 		
 		char *input_file_;
 		char **actual_maze_;

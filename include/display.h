@@ -25,6 +25,7 @@ class GlutEngine {
 		static void KeyPress(unsigned char key, int x, int y);
 		static void UpdatePos();
 		static void MouseMove(int x, int y);
+		static void MouseClick(int button, int state, int x, int y);
 
 		static camera_t camera_type;
 		static const int kWindowPosX = -1;
@@ -33,9 +34,11 @@ class GlutEngine {
 		static const int kWindowSizeY = 650;
 		static const float kMoveSpeed = 0.15f;
 
+		// TODO:Sort all this damned statics
 		static int fov_angle_;
 		static int near_plane_;
 		static int far_plane_;
+		static float zoom_factor_;
 
 		static Float3 *camera_;
 		static Float3 *orig_coords_mouse_;
