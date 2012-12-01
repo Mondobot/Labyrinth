@@ -15,8 +15,7 @@
 
 GLdouble MazeGame::cube_size_ = 1.5;
 GLdouble MazeGame::fine_spacing_ = 0.01;
-GLdouble MazeGame::plyr_pos_x_ = -1;
-GLdouble MazeGame::plyr_pos_y_ = -1;
+Float3 * MazeGame::player_ = new Float3(-1, 0, -1);
 const char MazeGame::name_[] = "Labyrinth";
 
 MazeGame::MazeGame(std::string input_file) {
@@ -97,20 +96,24 @@ void MazeGame::RenderSelf(void) {
 void MazeGame::PlacePlayer() {
 	srand(time(NULL));
 
+	player_->y = 3.0 / 8 * cube_size_;
+
 	int i, j;
-	while (plyr_pos_x_ == -1) {
+	while (player_->x == -1) {
 		i = rand() % this->maze_size_;
 		j = rand() % this->maze_size_;
 
 		if (this->actual_maze_[i][j] != '#') {
-			plyr_pos_x_ = i;
-			plyr_pos_y_ = j;
+			player_->x = i;
+			player_->z = j;
 		}
 	}
 
-	std::cout << plyr_pos_x_ << " " << plyr_pos_y_ << std::endl;
+	std::cout << player_->x << " " << player_->z << std::endl;
 }
 
 GLdouble MazeGame::maze_size() const { return this->maze_size_ * cube_size_; }
+
+Float3 MazeGame::player() const { return *player_; }
 
 const char* MazeGame::name() const { return this->name_; }

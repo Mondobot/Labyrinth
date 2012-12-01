@@ -10,8 +10,11 @@ MazeGame * GlutEngine::game_ = NULL;
 int GlutEngine::fov_angle_ = 45;
 int GlutEngine::near_plane_ = 1;
 int GlutEngine::far_plane_ = 1000;
+float GlutEngine::delta_move_ = 0;
 Float3 * GlutEngine::camera_ = new Float3();
 GlutEngine::camera_t GlutEngine::camera_type = OVERVIEW;
+Float3 * GlutEngine::camera_dir_ = new Float3(0, 0, 1);
+
 
 GlutEngine::GlutEngine(MazeGame *game) {
 	game_ = game;
@@ -34,6 +37,8 @@ void GlutEngine::Init(int argc, char *argv[]) {
 	// Register callbacks
 	glutDisplayFunc(RenderScene);
 	glutReshapeFunc(ResizeScene);
+	glutKeyboardFunc(KeyPress);
+	glutIdleFunc(IdleFunc);
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -74,9 +79,12 @@ void GlutEngine::ResizeScene(int width, int height) {
 void GlutEngine::SetView() {
 	glLoadIdentity();
 
+	Float3 player = game_->player();
 	Float3 look_at;
 	Float3 up;
-	
+
+	int sign = 0;
+
 	switch (camera_type) {
 		case (OVERVIEW):
 			camera_->x = camera_->z = game_->maze_size() / 2.0;
@@ -87,15 +95,65 @@ void GlutEngine::SetView() {
 
 			look_at.x = look_at.z = camera_->x;
 			break;
+
+		case (FIRST_PERSON):
+			camera_->x = player.x;
+			camera_->y = player.y;
+			camera_->z = player.z;
+
+			look_at.x = player.x + camera_dir_->x;
+			look_at.y = player.y + camera_dir_->y;
+			look_at.z = player.z + camera_dir_->z;
+
+			sign = (look_at.y - camera_->y) > 0 ? 1 : -1;
+			up.x = sign * look_at.x;
+			up.z = sign * look_at.z;
+			up.y = up.x * up.x + up.z * up.z * 1.0f / look_at.y;
+			//up.y = floor(up.y);
+			
+			break;
 	}
 
-/*
+
 	std::cout << "gluLookAt: " << camera_->x << " " << camera_->y;
 	std::cout << " " << camera_->z << " " << look_at.x << " ";
 	std::cout << look_at.y << " " << look_at.z << " " << up.x;
-	std::cout << up.y << " " << up.z << std::endl;
-*/
+	std::cout << " " << up.y << " " << up.z << std::endl;
+
 	gluLookAt(camera_->x, camera_->y, camera_->z,
 			look_at.x, look_at.y, look_at.z,
 			up.x, up.y, up.z);
+}
+
+void GlutEngine::KeyPress(unsigned char key, int x, int y) {
+	switch (key) {
+		case KEY_ESCAPE:
+			// TODO: Exit properly!!!
+			exit(0);
+			break;
+
+		case KEY_1:
+			camera_type = OVERVIEW;
+			break;
+
+		case KEY_2:
+			camera_type = THIRD_PERSON;
+			break;
+
+		case KEY_3:
+			camera_type = FIRST_PERSON;
+			break;
+
+		case KEY_W:
+			delta_move_ += kMoveSpeed;
+			break;
+
+		case KEY_S:
+			delta_move_ -= kMoveSpeed;
+			break;
+	}
+}
+
+void GlutEngine::IdleFunc() {
+	glutPostRedisplay();
 }
