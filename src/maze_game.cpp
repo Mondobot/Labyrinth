@@ -9,13 +9,14 @@
 #include "maze_game.h"
 
 #define BLACK 0.0f, 0.0f, 0.0f
-#define PURPLE 0.6f, 0.4f, 0.3f
-#define ORANGE 0.3f, 0.2f, 0.6f
+#define PURPLE 0.3f, 0.2f, 0.6f
+#define ORANGE 0.6f, 0.4f, 0.3f
 #define WHITE 1.0f, 1.0f, 1.0f
 
 GLdouble MazeGame::cube_size_ = 1.5;
 GLdouble MazeGame::fine_spacing_ = 0.01;
 Float3 * MazeGame::player_ = new Float3(-1, cube_size_ / 2.0f, -1);
+Float3 * MazeGame::portal_ = new Float3(-1, cube_size_ / 2.0f, -1);
 const char MazeGame::name_[] = "Labyrinth";
 
 MazeGame::MazeGame(std::string input_file) {
@@ -28,8 +29,11 @@ MazeGame::~MazeGame() {
 }
 
 void MazeGame::Init() {
+	srand(time(NULL));
+
 	ReadData();
-	PlacePlayer();
+	PlaceRandObject(player_);
+	PlaceRandObject(portal_);
 
 	for (int i = 0; i < this->maze_size_; ++i) {
 		for (int j = 0; j < this->maze_size_; ++j)
@@ -64,12 +68,12 @@ void MazeGame::RenderSelf(void) {
 			glPushMatrix();
 
 			GLdouble y_coord = cube_size_ / 2;
-			glColor3f(PURPLE);
+			glColor3f(ORANGE);
 
 
 			if (this->actual_maze_[i][j] == '.') {
 				y_coord *= -1;
-				glColor3f(ORANGE);
+				glColor3f(PURPLE);
 			}
 
 
@@ -84,11 +88,20 @@ void MazeGame::RenderSelf(void) {
 			glPopMatrix();
 		}
 
-	// Draw the player
+	// Draw the player and the portal
 	glPushMatrix();
+
 	glTranslatef(player_->x, player_->y, player_->z);
 	glColor3f(BLACK);
 	glutSolidSphere(cube_size_ / 5, 20, 20);
+
+	glPopMatrix();
+	glPushMatrix();
+
+	glTranslatef(portal_->x, portal_->y, portal_->z);
+	glColor3f(0.9f, 0.2f, 0.2f);
+	glutSolidTorus(cube_size_ / 10, cube_size_ / 3, 30, 20);
+
 	glPopMatrix();
 
 	std::cout << "player: " << player_->x << " " << player_->y << " " << player_->z << std::endl;
@@ -102,23 +115,22 @@ void MazeGame::RenderSelf(void) {
 */
 }
 
-void MazeGame::PlacePlayer() {
-	srand(time(NULL));
+void MazeGame::PlaceRandObject(Float3 *obj) {
 
-	player_->y = 3.0 / 8 * cube_size_;
+	obj->y = 3.0 / 8 * cube_size_;
 
 	int i, j;
-	while (player_->x == -1) {
+	while (obj->x == -1) {
 		i = rand() % this->maze_size_;
 		j = rand() % this->maze_size_;
 
 		if (this->actual_maze_[i][j] != '#') {
-			player_->x = i * cube_size_;
-			player_->z = j * cube_size_;
+			obj->x = i * cube_size_;
+			obj->z = j * cube_size_;
 		}
 	}
 
-	std::cout << player_->x << " " << player_->z << std::endl;
+	//std::cout << player_->x << " " << player_->z << std::endl;
 }
 
 void MazeGame::set_player_pos(Float3 player) {

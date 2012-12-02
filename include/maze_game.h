@@ -22,7 +22,7 @@ class MazeGame {
 
 	private:
 		void ReadData();
-		void PlacePlayer();
+		void PlaceRandObject(Float3 *obj);
 		
 		char *input_file_;
 		char **actual_maze_;
@@ -31,6 +31,7 @@ class MazeGame {
 		static GLdouble cube_size_;
 		static const char name_[];
 
-		static Float3 * player_;
+		static Float3 *player_;
+		static Float3 *portal_;
 };
 #endif	//MAZE_GAME_H_

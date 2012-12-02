@@ -130,6 +130,7 @@ void GlutEngine::SetView() {
 			look_at.y = player.y;
 			look_at.z = player.z;
 
+			// Direction is always "up"
 			up.x = up.z = 0;
 			up.y = 1;
 			break;
@@ -195,6 +196,7 @@ void GlutEngine::KeyPress(unsigned char key, int x, int y) {
 	switch (key) {
 		case KEY_ESCAPE:
 			// TODO: Exit properly!!!
+			// (by calling the destructor)
 			exit(0);
 			break;
 
@@ -253,10 +255,12 @@ void GlutEngine::UpdatePos() {
 			player.x += delta_move_->x * camera_dir_->x;
 			player.z += delta_move_->x * camera_dir_->z;
 
-			player.x += delta_move_->z * sin(view_dir_angle_->x +
-										delta_angle_->x - 90);
-			player.z += delta_move_->z * -cos(view_dir_angle_->x +
-										delta_angle_->z - 90);
+			player.x -= delta_move_->z * // sin(view_dir_angle_->x +
+									//	delta_angle_->z + 90) *
+									camera_dir_->z;
+			player.z -= delta_move_->z * //-cos(view_dir_angle_->x +
+									//	delta_angle_->z + 90) *
+										camera_dir_->x;;
 			break;
 	}
 

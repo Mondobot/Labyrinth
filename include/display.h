@@ -30,8 +30,8 @@ class GlutEngine {
 		static camera_t camera_type;
 		static const int kWindowPosX = -1;
 		static const int kWindowPosY = -1;
-		static const int kWindowSizeX = 800;
-		static const int kWindowSizeY = 650;
+		static const int kWindowSizeX = 1200;
+		static const int kWindowSizeY = 600;
 		static const float kMoveSpeed = 0.15f;
 
 		// TODO:Sort all this damned statics
