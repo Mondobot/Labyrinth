@@ -14,22 +14,26 @@ class MazeGame {
 
 		void Init();
 		void RenderSelf();
+		void DetectCollisions(Float3 &delta_move);
 
 		const char* name() const;
 		GLdouble maze_size() const;
 		Float3 player() const;
-		void set_player_pos(Float3 player);
+		void update_player_pos(Float3 offset);
 
 	private:
 		void ReadData();
 		void PlaceRandObject(Float3 *obj);
-		
+		inline bool InRange(float a, float b);
+
+
 		char *input_file_;
 		char **actual_maze_;
 		int maze_size_;
 		static GLdouble fine_spacing_;
 		static GLdouble cube_size_;
 		static const char name_[];
+		static const float kMinDist;
 
 		static Float3 *player_;
 		static Float3 *portal_;

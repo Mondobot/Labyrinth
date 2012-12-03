@@ -186,7 +186,7 @@ void GlutEngine::SetView() {
 
 
 //	Float3 plr = game_->player();
-	std::cout << "cam: " << camera_->x << " " << camera_->y << " " << camera_->z;
+//	std::cout << "cam: " << camera_->x << " " << camera_->y << " " << camera_->z;
 //	std::cout << "\nplayer: " << plr.x << " " << plr.y << " ";
 //	std::cout << plr.z << std::endl;
 
@@ -235,14 +235,13 @@ void GlutEngine::IdleFunc() {
 }
 
 void GlutEngine::UpdatePos() {
-	// TODO: Add collision detection here
-
-	Float3 player = game_->player();
+	int sign = 1;
+	Float3 offset;
 
 	switch (camera_type) {
 		case (OVERVIEW):
-			player.z -= delta_move_->x;
-			player.x -= delta_move_->z;
+			offset.z -= delta_move_->x;
+			offset.x -= delta_move_->z;
 			break;
 
 		// TODO: Looks like crap, clean it up!
@@ -252,23 +251,34 @@ void GlutEngine::UpdatePos() {
 			
 
 		case (FIRST_PERSON):
-			player.x += delta_move_->x * camera_dir_->x;
-			player.z += delta_move_->x * camera_dir_->z;
+			offset.x += delta_move_->x * camera_dir_->x;
+			offset.z += delta_move_->x * camera_dir_->z;
 
-			player.x -= delta_move_->z * // sin(view_dir_angle_->x +
-									//	delta_angle_->z + 90) *
+			//if (camera_dir_->z
+
+			offset.x += delta_move_->z *  //sin(view_dir_angle_->x +
+									//	delta_angle_->x - 90);// *
 									camera_dir_->z;
-			player.z -= delta_move_->z * //-cos(view_dir_angle_->x +
-									//	delta_angle_->z + 90) *
+
+					//-cos(view_dir_angle_->x + delta_angle_->x + 90) *
+					//sin(view_dir_angle_->y + delta_angle_->y);
+			offset.z += delta_move_->z * //-cos(view_dir_angle_->x +
+									//	delta_angle_->x + 90); //*
 										camera_dir_->x;;
+									
+					//sin(view_dir_angle_->x + delta_angle_->x + 90) *
+					//sin(view_dir_angle_->y + delta_angle_->y);
+
 			break;
 	}
 
+	// TODO: Add collision detection here
+	game_->DetectCollisions(offset);
 
 	delta_move_->x = 0;
 	delta_move_->z = 0;
 
-	game_->set_player_pos(player);
+	game_->update_player_pos(offset);
 }
 
 void GlutEngine::MouseMove(int x, int y) {
@@ -309,7 +319,7 @@ void GlutEngine::MouseMove(int x, int y) {
 			}
 			camera_dir_->x = sin(view_dir_angle_->x + delta_angle_->x) *
 							sin(view_dir_angle_->y + delta_angle_->y);
-			camera_dir_->z = -cos(view_dir_angle_->x + delta_angle_->z) *
+			camera_dir_->z = -cos(view_dir_angle_->x + delta_angle_->x) *
 							sin(view_dir_angle_->y + delta_angle_->y);
 			camera_dir_->y = cos(view_dir_angle_->y + delta_angle_->y);
 

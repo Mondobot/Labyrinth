@@ -1,6 +1,7 @@
 /*
  * Includes go here
  */
+#include <math.h>
 #include <time.h>
 #include <string.h>
 #include <iostream>
@@ -18,6 +19,7 @@ GLdouble MazeGame::fine_spacing_ = 0.01;
 Float3 * MazeGame::player_ = new Float3(-1, cube_size_ / 2.0f, -1);
 Float3 * MazeGame::portal_ = new Float3(-1, cube_size_ / 2.0f, -1);
 const char MazeGame::name_[] = "Labyrinth";
+const float MazeGame::kMinDist = cube_size_ / 10;
 
 MazeGame::MazeGame(std::string input_file) {
 	this->input_file_ = new char [input_file.size() + 1];
@@ -104,7 +106,7 @@ void MazeGame::RenderSelf(void) {
 
 	glPopMatrix();
 
-	std::cout << "player: " << player_->x << " " << player_->y << " " << player_->z << std::endl;
+	//std::cout << "player: " << player_->x << " " << player_->y << " " << player_->z << std::endl;
 
 /*
 	glBegin(GL_TRIANGLES);
@@ -115,7 +117,45 @@ void MazeGame::RenderSelf(void) {
 */
 }
 
+bool MazeGame::InRange(float a, float b) {
+	return (abs(a - b) < (kMinDist)); //+ cube_size_ / 2));
+}
+
+void MazeGame::DetectCollisions(Float3 &offset) {
+	// Check wall collisions
+	int i = round(player_->x / cube_size_);
+	int j = round(player_->z / cube_size_);
+
+	if (actual_maze_[i][j - 1] == '#') {
+		if (InRange((player_->z + offset.z), ((j - 1) * cube_size_)))
+			offset.z = 0;
+	}
+
+	if (actual_maze_[i][j + 1] == '#') {
+		if (InRange((player_->z + offset.z), ((j + 1) * cube_size_)))
+			offset.z = 0;
+	}
+
+	if (actual_maze_[i - 1][j] == '#') {
+		if (InRange((player_->x + offset.x), ((i - 1) * cube_size_)))
+			offset.x = 0;
+	}
+
+	if (actual_maze_[i + 1][j] == '#') {
+		if (InRange((player_->x + offset.x), ((i + 1) * cube_size_)))
+			offset.x = 0;
+	}
+
+	if (i == round(portal_->x / cube_size_) &&
+		j == round(portal_->z / cube_size_)) {
+			portal_->x = -1;
+			PlaceRandObject(portal_);
+	}
+
+}
+
 void MazeGame::PlaceRandObject(Float3 *obj) {
+	std::cout << "Placing rand obj\n";
 
 	obj->y = 3.0 / 8 * cube_size_;
 
@@ -133,10 +173,10 @@ void MazeGame::PlaceRandObject(Float3 *obj) {
 	//std::cout << player_->x << " " << player_->z << std::endl;
 }
 
-void MazeGame::set_player_pos(Float3 player) {
-	player_->x = player.x;
-	player_->y = player.y;
-	player_->z = player.z;
+void MazeGame::update_player_pos(Float3 offset) {
+	player_->x += offset.x;
+	player_->y += offset.y;
+	player_->z += offset.z;
 }
 
 GLdouble MazeGame::maze_size() const { return this->maze_size_ * cube_size_; }
