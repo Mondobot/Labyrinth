@@ -23,7 +23,9 @@ class GlutEngine {
 		static void SetView();
 		static void IdleFunc();
 		static void KeyPress(unsigned char key, int x, int y);
+		static void KeyRelease(unsigned char key, int x, int y);
 		static void UpdatePos();
+		static void GetMovement();
 		static void MouseMove(int x, int y);
 		static void MouseClick(int button, int state, int x, int y);
 
@@ -32,7 +34,7 @@ class GlutEngine {
 		static const int kWindowPosY = -1;
 		static const int kWindowSizeX = 1200;
 		static const int kWindowSizeY = 600;
-		static const float kMoveSpeed = 0.15f;
+		static const float kMoveSpeed = 0.1f;
 
 		// TODO:Sort all this damned statics
 		static int fov_angle_;
@@ -52,15 +54,16 @@ class GlutEngine {
 		static int window_height_;
 		static int window_width_;
 
-		static const int KEY_ESCAPE = 27;
-		static const int KEY_1 = '1';
-		static const int KEY_2 = '2';
-		static const int KEY_3 = '3';
+		static const int EXIT = 27;
+		static const int CAM_1 = '1';
+		static const int CAM_2 = '2';
+		static const int CAM_3 = '3';
 
-		static const int KEY_W = 'w';
-		static const int KEY_S = 's';
-		static const int KEY_A = 'a';
-		static const int KEY_D = 'd';
+		static const int FWD = 'w';
+		static const int BACK = 's';
+		static const int LEFT= 'a';
+		static const int RIGHT = 'd';
+		static bool keys_pressed_[4];
 
 		static int kkt;
 

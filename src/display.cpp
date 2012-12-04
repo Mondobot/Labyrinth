@@ -24,6 +24,7 @@ Float3 * GlutEngine::view_dir_angle_ = new Float3();
 Float3 * GlutEngine::delta_angle_ = new Float3();
 Float3 * GlutEngine::camera_dir_ = new Float3(0, 0, 0);
 Float3 * GlutEngine::delta_move_ = new Float3();
+bool GlutEngine::keys_pressed_[4] = {false};
 
 int GlutEngine::kkt = 0;
 int GlutEngine::window_height_ = GlutEngine::kWindowSizeY;
@@ -53,6 +54,7 @@ void GlutEngine::Init(int argc, char *argv[]) {
 	glutDisplayFunc(RenderScene);
 	glutReshapeFunc(ResizeScene);
 	glutKeyboardFunc(KeyPress);
+	glutKeyboardUpFunc(KeyRelease);
 	glutIdleFunc(IdleFunc);
 	glutPassiveMotionFunc(MouseMove);
 	glutMouseFunc(MouseClick);
@@ -70,6 +72,7 @@ void GlutEngine::RenderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
+	GetMovement();
 	UpdatePos();
 
 	SetView();
@@ -155,12 +158,12 @@ void GlutEngine::SetView() {
 			break;
 	}
 
-
+/*
 	std::cout << "gluLookAt: " << camera_->x << " " << camera_->y;
 	std::cout << " " << camera_->z << " " << look_at.x << " ";
 	std::cout << look_at.y << " " << look_at.z << " " << up.x;
 	std::cout << " " << up.y << " " << up.z << std::endl;
-
+*/
 
 	view_dir_angle_->x += delta_angle_->x;
 	view_dir_angle_->y += delta_angle_->y;
@@ -184,44 +187,86 @@ void GlutEngine::SetView() {
 
 void GlutEngine::KeyPress(unsigned char key, int x, int y) {
 	switch (key) {
-		case KEY_ESCAPE:
+		case EXIT:
 			// TODO: Exit properly!!!
 			// (by calling the destructor)
 			exit(0);
 			break;
 
-		case KEY_1:
+		case CAM_1:
 			camera_type = OVERVIEW;
 			break;
 
-		case KEY_2:
+		case CAM_2:
 			camera_type = THIRD_PERSON;
 			break;
 
-		case KEY_3:
+		case CAM_3:
 			camera_type = FIRST_PERSON;
 			break;
 
-		case KEY_W:
-			delta_move_->x += kMoveSpeed;
+		case FWD:
+			keys_pressed_[0] = true;
+			//keys_pressed_[1] = false;
 			break;
 
-		case KEY_S:
-			delta_move_->x -= kMoveSpeed;
+		case BACK:
+			keys_pressed_[1] = true;
+			//keys_pressed_[0] = false;
+			//delta_move_->x -= kMoveSpeed;
 			break;
 
-		case KEY_D:
-			delta_move_->z -= kMoveSpeed;
+		case RIGHT:
+			keys_pressed_[2] = true;
+			//keys_pressed_[3] = false;
+			//delta_move_->z -= kMoveSpeed;
 			break;
 
-		case KEY_A:
-			delta_move_->z += kMoveSpeed;
+		case LEFT:
+			keys_pressed_[3] = true;
+			//keys_pressed_[2] = false;
+			//delta_move_->z += kMoveSpeed;
+			break;
+	}
+}
+
+void GlutEngine::KeyRelease(unsigned char key, int x, int y) {
+	switch (key) {
+		case (FWD):
+			keys_pressed_[0] = false;
+			break;
+
+		case (BACK):
+			keys_pressed_[1] = false;
+			break;
+
+		case (RIGHT):
+			keys_pressed_[2] = false;
+			break;
+
+		case (LEFT):
+			keys_pressed_[3] = false;
 			break;
 	}
 }
 
 void GlutEngine::IdleFunc() {
 	glutPostRedisplay();
+}
+
+void GlutEngine::GetMovement() {
+	delta_move_->x = delta_move_->z = 0;
+	if (keys_pressed_[0])
+		delta_move_->x += kMoveSpeed;
+
+	if (keys_pressed_[1])
+		delta_move_->x -= kMoveSpeed;
+
+	if (keys_pressed_[2])
+		delta_move_->z -= kMoveSpeed;
+
+	if (keys_pressed_[3])
+		delta_move_->z += kMoveSpeed;
 }
 
 void GlutEngine::UpdatePos() {
@@ -259,12 +304,7 @@ void GlutEngine::UpdatePos() {
 			break;
 	}
 
-	// TODO: Add collision detection here
 	game_->DetectCollisions(offset);
-
-	delta_move_->x = 0;
-	delta_move_->z = 0;
-
 	game_->update_player_pos(offset);
 }
 

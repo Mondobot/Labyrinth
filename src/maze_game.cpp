@@ -90,7 +90,7 @@ void MazeGame::RenderSelf(void) {
 			glPopMatrix();
 		}
 
-	// Draw the player and the portal
+	// Draw the player
 	glPushMatrix();
 
 	glTranslatef(player_->x, player_->y, player_->z);
@@ -98,6 +98,8 @@ void MazeGame::RenderSelf(void) {
 	glutSolidSphere(cube_size_ / 5, 20, 20);
 
 	glPopMatrix();
+
+	// Draw the portal
 	glPushMatrix();
 
 	glTranslatef(portal_->x, portal_->y, portal_->z);
@@ -173,7 +175,7 @@ void MazeGame::PlaceRandObject(Float3 *obj) {
 		}
 	}
 
-	//std::cout << player_->x << " " << player_->z << std::endl;
+	std::cout << obj->x / cube_size_ << " " << obj->z / cube_size_ << std::endl;
 }
 
 void MazeGame::update_player_pos(Float3 offset) {
