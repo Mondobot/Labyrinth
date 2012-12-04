@@ -37,11 +37,13 @@ class GlutEngine {
 		static const int kWindowSizeY = 600;
 		static const float kMoveSpeed = 0.1f;
 
-		// TODO:Sort all this damned statics
+		static MazeGame *game_;
+
 		static int fov_angle_;
 		static int near_plane_;
 		static int far_plane_;
 		static float zoom_factor_;
+		static float mouse_sensitivity_;
 
 		static Float3 *camera_;
 		static Float3 *orig_coords_mouse_;
@@ -49,8 +51,6 @@ class GlutEngine {
 		static Float3 *delta_angle_;
 		static Float3 *delta_move_;
 		static Float3 *camera_dir_;
-
-		static MazeGame *game_;
 
 		static int window_height_;
 		static int window_width_;
@@ -65,9 +65,6 @@ class GlutEngine {
 		static const int LEFT= 'a';
 		static const int RIGHT = 'd';
 		static bool keys_pressed_[4];
-
-		static int kkt;
-
 };
 
 #endif	//_DISPLAY_H_
