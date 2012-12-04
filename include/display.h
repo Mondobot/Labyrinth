@@ -4,6 +4,7 @@
 #ifndef _DISPLAY_H_
 #define _DISPLAY_H_
 #include <GL/glut.h>
+#include <GL/freeglut.h>
 
 #include "maze_game.h"
 #include "float3.h"

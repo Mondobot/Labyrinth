@@ -18,5 +18,6 @@ int main(int argc, char *argv[]) {
 	engine.Init(argc, argv);
 	engine.Run();
 
+	engine.GlutEngine::~GlutEngine();
 	return 0;
 }

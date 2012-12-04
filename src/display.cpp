@@ -136,6 +136,9 @@ void GlutEngine::SetView() {
 			break;
 
 		case (THIRD_PERSON):
+			if (zoom_factor_ - 0 < PRECISION)
+				camera_type = FIRST_PERSON;
+
 			camera_->x = player.x - camera_dir_->x * zoom_factor_;
 			camera_->y = player.y - camera_dir_->y * (zoom_factor_ + 2);
 			camera_->z = player.z - camera_dir_->z * zoom_factor_;
@@ -218,8 +221,7 @@ void GlutEngine::PrintScore() {
 void GlutEngine::KeyPress(unsigned char key, int x, int y) {
 	switch (key) {
 		case EXIT:
-			//exit(0);
-			throw 1;
+			glutLeaveMainLoop();
 			break;
 
 		case CAM_1:
@@ -232,6 +234,7 @@ void GlutEngine::KeyPress(unsigned char key, int x, int y) {
 
 		case CAM_3:
 			camera_type = FIRST_PERSON;
+			
 			break;
 
 		case FWD:
