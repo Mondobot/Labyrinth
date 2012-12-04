@@ -37,14 +37,22 @@ GlutEngine::GlutEngine(MazeGame *game) {
 }
 
 GlutEngine::~GlutEngine() {
-	//TODO: add destructor code
+	game_->MazeGame::~MazeGame();
+
+	delete camera_;
+	delete orig_coords_mouse_;
+	delete view_dir_angle_;
+	delete delta_angle_;
+	delete delta_move_;
+	delete camera_dir_;
 }
 
 void GlutEngine::Init(int argc, char *argv[]) {
 
 	// Init Glut and create a window
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE |
+					GLUT_RGBA | GLUT_MULTISAMPLE);
 
 	glutInitWindowPosition(this->kWindowPosX, this->kWindowPosY);
 	glutInitWindowSize(this->kWindowSizeX, this->kWindowSizeY);
@@ -60,6 +68,7 @@ void GlutEngine::Init(int argc, char *argv[]) {
 	glutMouseFunc(MouseClick);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 	glutSetCursor(GLUT_CURSOR_NONE);
 }
 
@@ -209,9 +218,8 @@ void GlutEngine::PrintScore() {
 void GlutEngine::KeyPress(unsigned char key, int x, int y) {
 	switch (key) {
 		case EXIT:
-			// TODO: Exit properly!!!
-			// (by calling the destructor)
-			exit(0);
+			//exit(0);
+			throw 1;
 			break;
 
 		case CAM_1:

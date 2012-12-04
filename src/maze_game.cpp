@@ -35,7 +35,14 @@ MazeGame::MazeGame(std::string input_file) {
 }
 
 MazeGame::~MazeGame() {
-	//TODO: Add destructor code
+	for (int i = 0; i < maze_size_; ++i)
+		delete[] actual_maze_[i];
+
+	delete[] actual_maze_;
+
+	delete player_;
+	delete portal_;
+	delete this->input_file_;
 }
 
 void MazeGame::Init() {
