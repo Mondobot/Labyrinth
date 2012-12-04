@@ -19,6 +19,7 @@ class MazeGame {
 		const char* name() const;
 		GLdouble maze_size() const;
 		Float3 player() const;
+		int score() const;
 		void update_player_pos(Float3 offset);
 
 	private:
@@ -33,6 +34,7 @@ class MazeGame {
 		static GLdouble fine_spacing_;
 		static GLdouble cube_size_;
 		static const char name_[];
+		static int score_;
 		static const float kMinDist;
 
 		static Float3 *player_;

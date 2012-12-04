@@ -19,6 +19,7 @@ GLdouble MazeGame::fine_spacing_ = 0.01;
 Float3 * MazeGame::player_ = new Float3(-1, cube_size_ / 2.0f, -1);
 Float3 * MazeGame::portal_ = new Float3(-1, cube_size_ / 2.0f, -1);
 const char MazeGame::name_[] = "Labyrinth";
+int MazeGame::score_ = 0;
 const float MazeGame::kMinDist = cube_size_ / 10;
 
 MazeGame::MazeGame(std::string input_file) {
@@ -155,6 +156,7 @@ void MazeGame::DetectCollisions(Float3 &offset) {
 	if (x == round(portal_->x / cube_size_) &&
 		y == round(portal_->z / cube_size_)) {
 			portal_->x = -1;
+			++score_;
 			PlaceRandObject(portal_);
 	}
 }
@@ -189,3 +191,5 @@ GLdouble MazeGame::maze_size() const { return this->maze_size_ * cube_size_; }
 Float3 MazeGame::player() const { return *player_; }
 
 const char* MazeGame::name() const { return this->name_; }
+
+int MazeGame::score() const { return this->score_; }

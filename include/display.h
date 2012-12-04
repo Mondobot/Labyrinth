@@ -21,6 +21,7 @@ class GlutEngine {
 		static void RenderScene();
 		static void ResizeScene(int width, int height);
 		static void SetView();
+		static void PrintScore();
 		static void IdleFunc();
 		static void KeyPress(unsigned char key, int x, int y);
 		static void KeyRelease(unsigned char key, int x, int y);

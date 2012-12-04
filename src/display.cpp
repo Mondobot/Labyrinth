@@ -1,5 +1,6 @@
 #include <math.h>
 #include <iostream>
+#include <sstream>
 
 #include "display.h"
 
@@ -77,6 +78,8 @@ void GlutEngine::RenderScene(void) {
 
 	SetView();
 	game_->RenderSelf();
+
+	PrintScore();
 
 	glutSwapBuffers();
 }
@@ -183,6 +186,33 @@ void GlutEngine::SetView() {
 	std::cout << "\nplayer: " << plr.x << " " << plr.y << " ";
 	std::cout << plr.z << std::endl;
 */
+}
+
+void GlutEngine::PrintScore() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	//glOrtho(0, Width , 0, Height, -1, 1);
+	glOrtho(0.0f, window_width_, 0, window_height_, -1.0f, 1.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+
+	glRasterPos2d(10, 10);
+
+	std::stringstream out;
+	out << "Score: " << game_->score();
+	std::string ceva = out.str();
+	
+	for (int i = 0; i < ceva.length(); ++i)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ceva[i]);
+
+	glEnable(GL_DEPTH_TEST);
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+
 }
 
 void GlutEngine::KeyPress(unsigned char key, int x, int y) {
