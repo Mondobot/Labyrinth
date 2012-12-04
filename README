@@ -1,1 +1,121 @@
 Nume: Pavaluca Matei
+Grupa: 334CA
+
+1. Cerinta
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Programul implementeaza un joc simplu de "Labyrinth" in care o bila ghinionista
+trebuie sa gaseasca un portal ce o va scoate din labirint. Din nefericire bila
+nu stie ca nu exista de fapt iesire, ficare nou portal fiind de fapt un fals,
+ce cum este atins se relocalizeaza. Pentru a ne distra totusi privind incercarile
+zadarnice ale bilei, de fiecare data cand atinge un portal aceasta primeste un
+punct.
+
+
+2. Utilizare
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*Compilare:
+
+Pentru compilare se foloseste comanda "make".
+
+*Rulare:
+
+Programul poate fi rulat fie folosing Makefile-ul (ruland comanda make run),
+fie direct, prin comanda "./labyrinth input" unde input este fisierul de
+intrare ce contine labirintul. In cazul acestei arhive fisierul de intrare se
+numeste exact "input".
+
+*Formatul fisierului de intrare:
+
+Fisierul de intrare are pe prima linie un numar N ce reprezinta lungimea
+laturii labirintului. Pe urmatoarele N linii se gasesc N caractere care sunt
+fie '.' pentru podea, fie '#' pentru zid.
+
+*Butoane
+
+Odata rulat, jocul poate comuta intre diversele camere prin tastele 1-3;
+1 - OVERVIEW
+2 - THIRD_PERSON
+3 - FIRST_PERSON
+
+Deplasarea se face de pe tastele WASD. Tastele W si S fac deplasarea fata -
+spate iar tastele A si D fac deplasarea stanga - dreapta (strafe).
+Camera se misca folosing mouse-ul.
+In modul THIRD_PERSON se poate face zoom din rotita de scroll.
+
+Programul se inchide la apasarea tastei ESC.
+
+
+3. Implementare
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+OS: Ubuntu 12.04
+IDE: Vim
+Compilator: g++
+Bibliotecile folosite sunt glut si freeglut.
+
+*Descriere
+
+Programul are 2 clase principale, MazeGame si GlutEngine.
+MazeGame tine toate datele legate de labirint (poziitle obiectelor). Rolul 
+principal al clasei este de a citi datele din fisier si de a desena obiectele.
+GlutEngine se ocupa de partea de grafica si input de la utilizator.
+
+Glut folosind un mod de lucru event driven, majoritatea functiilor din 
+GlutEngine sunt functii de callback.
+
+In functia IdleMouse se calculeaza offsetul miscarii din mouse care este apoi
+transformat din XOY in XYZ. Dupa ce este calculat vectorul camerei
+este descompus pentru a determina miscarile efective ce au loc in XYZ.
+
+Nu o sa intru in detalii cu toate formulele folosite, acestea sunt in principal
+cele de la coordonate sferice / polare.
+
+Functia principala de afisare (RenderScene()) are urmatoarea structura:
+	-> GetMovement() -> calculeaza pe ce coordonate trebuie sa se miste
+					jucatorul (x = fata / spate, z = stanga / dreapta)
+
+	-> UpdatePos() -> calculeaza coordonatele efective ale noii pozitii
+					in XYZ (tot aici se apeleaza si detectia coliziunilor)
+
+	-> SetView() -> calculeaza pozitia camerei (foloseste gluLookAt)
+
+	-> game_->RenderSelf() -> se afiseaza labirintul, jucatorul si portalul
+
+	-> PrintScore() -> se afiseaza scorul (sub forma de HUD) in partea stanga-
+					jos a ecranului (portal atins = +1 punct)
+
+4. Continutul arhivei
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/-
+ |- include/ |- float3.h
+ |		   |- display.h
+ |		   |- maze_game.h
+ |
+ |- src/ |- display.cpp
+ |	    |- maze_game.cpp
+ |	    |- main.cpp
+ |
+ |- bin/
+ |
+ |- Makefile
+ |- input
+ |- README
+
+
+5. Functionalitati:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*Standard:
+	- bila se misca in labirint
+	- coliziuni
+	- 3 tipuri de camere
+	- portal
+
+*Bonus:
+	- miscare se face cu ajutorul mouse-ului
+	- miscarea se face si in lateral (strafe)
+	- scor calculat in functie de cate portaluri sunt atinse
+	- functie de zoom (de pe rotita de scrool)
+	- zoom-ul pana la bila face trecerea la camera FIRST_PERSON si zoom out
+	din FIRST_PERSON face trecerea la THIRD_PERSON
+	- input multiplu care face miscarea naturala si cursiva
+	- camera OVERVIEW scaleaza inaltimea in functie de dimensiunile
+	labirintului (cat sa incapa tot)
