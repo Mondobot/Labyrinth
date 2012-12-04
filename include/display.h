@@ -4,11 +4,13 @@
 #ifndef _DISPLAY_H_
 #define _DISPLAY_H_
 #include <GL/glut.h>
+
 #include "maze_game.h"
 #include "float3.h"
 
 class GlutEngine {
 	public:
+		// Camera types
 		enum camera_t {OVERVIEW, THIRD_PERSON, FIRST_PERSON};
 
 		explicit GlutEngine(MazeGame *game);
@@ -66,5 +68,4 @@ class GlutEngine {
 		static const int RIGHT = 'd';
 		static bool keys_pressed_[4];
 };
-
 #endif	//_DISPLAY_H_

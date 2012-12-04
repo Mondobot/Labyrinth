@@ -13,15 +13,22 @@
 #define PURPLE 0.3f, 0.2f, 0.6f
 #define ORANGE 0.6f, 0.4f, 0.3f
 #define WHITE 1.0f, 1.0f, 1.0f
+#define PORTAL_RED 0.9f, 0.2f, 0.2f
 
-GLdouble MazeGame::cube_size_ = 1.5;
+const char MazeGame::game_name_[] = "Labyrinth";
+
 GLdouble MazeGame::fine_spacing_ = 0.01;
+GLdouble MazeGame::cube_size_ = 1.5;
+
+const float MazeGame::kMinDist = cube_size_ / 10;
+int MazeGame::score_ = 0;
+
+// Any object that have to be randomly placed on the map must
+// start with x = -1!!
 Float3 * MazeGame::player_ = new Float3(-1, cube_size_ / 2.0f, -1);
 Float3 * MazeGame::portal_ = new Float3(-1, cube_size_ / 2.0f, -1);
-const char MazeGame::name_[] = "Labyrinth";
-int MazeGame::score_ = 0;
-const float MazeGame::kMinDist = cube_size_ / 10;
 
+// Constructor
 MazeGame::MazeGame(std::string input_file) {
 	this->input_file_ = new char [input_file.size() + 1];
 	strcpy(this->input_file_, input_file.c_str());
@@ -38,6 +45,8 @@ void MazeGame::Init() {
 	PlaceRandObject(player_);
 	PlaceRandObject(portal_);
 
+	// Print the maze (at first for debugging purposes,
+	// but now because it looks cool >:)
 	for (int i = 0; i < this->maze_size_; ++i) {
 		for (int j = 0; j < this->maze_size_; ++j)
 			std::cout << this->actual_maze_[i][j] << " ";
@@ -46,6 +55,14 @@ void MazeGame::Init() {
 	}
 }
 
+// Reads the input from the input file
+// The format is the following:
+//	n :	-> dimension of the maze
+//		-> currently only square mazes are supported
+//
+//	matrix :	-> given line by line
+//			-> '.' for passable terrain
+//			-> '#' for walls
 void MazeGame::ReadData() {
 	// Open the file for reading
 	std::ifstream fin(this->input_file_);
@@ -64,27 +81,28 @@ void MazeGame::ReadData() {
 	fin.close();
 }
 
-// TODO: Works, but needs some cleaning
+// Gets called by the engine.
+// Renders the maze, player and1 "portal"
 void MazeGame::RenderSelf(void) {
 	for (int i = 0; i < this->maze_size_; ++i)
 		for (int j = 0; j < this->maze_size_; ++j) {
 			glPushMatrix();
 
+			// Height of all objects is set to a default
+			// (except from floors which have a negative height)
 			GLdouble y_coord = cube_size_ / 2;
 			glColor3f(ORANGE);
 
-
+			// Floors have a different height and color
 			if (this->actual_maze_[i][j] == '.') {
 				y_coord *= -1;
 				glColor3f(PURPLE);
 			}
 
-
 			glTranslatef(i * cube_size_, y_coord, j * cube_size_);
-
 			glutSolidCube(cube_size_ - fine_spacing_);
 
-			//glColor3f(WHITE);
+			// Draw the black "lines"
 			glColor3f(BLACK);
 			glutWireCube(cube_size_);
 
@@ -92,6 +110,8 @@ void MazeGame::RenderSelf(void) {
 		}
 
 	// Draw the player
+	// Dimensions are kept as magic numbers
+	// (too lazy to keep them in a proper way)
 	glPushMatrix();
 
 	glTranslatef(player_->x, player_->y, player_->z);
@@ -101,39 +121,40 @@ void MazeGame::RenderSelf(void) {
 	glPopMatrix();
 
 	// Draw the portal
+	// Dimensions are also magic numbers
 	glPushMatrix();
 
 	glTranslatef(portal_->x, portal_->y, portal_->z);
-	glColor3f(0.9f, 0.2f, 0.2f);
+	glColor3f(PORTAL_RED);
 	glutSolidTorus(cube_size_ / 10, cube_size_ / 3, 30, 20);
 
 	glPopMatrix();
-
-	//std::cout << "player: " << player_->x << " " << player_->y << " " << player_->z << std::endl;
-
-/*
-	glBegin(GL_TRIANGLES);
-		glVertex3f(2.0, 0.0, -6.0);
-		glVertex3f(-2.0, 0.0, -6.0);
-		glVertex3f(0.0, 2.0, -6.0);
-	glEnd();
-*/
 }
 
+// Simple function for detecting a one dimensional distance
 bool MazeGame::InRange(float a, float b) {
-	return (abs(a - b) < (kMinDist)); //+ cube_size_ / 2));
+	return (abs(a - b) < (kMinDist));
 }
 
+// When we want to check for collisions we check the 8 surrounding
+// squares; I chose this because the bounding spheres method looked
+// ugly
 void MazeGame::DetectCollisions(Float3 &offset) {
-	// Check wall collisions
+	// Get the position of the player in the maze matrix
 	int x = round(player_->x / cube_size_);
 	int y = round(player_->z / cube_size_);
 
+	// For each of the 8 surrounding squares
 	for (int i = -1; i <= 1; ++i)
 		for (int j = -1; j <= 1; ++j) {
 			if (i == 0 && j == 0)
 				continue;
-/*
+
+/* I chose to leave this commented because it did not behave as I wanted;
+ * It prevents my sphere to pass through cube corners (checks the diagonal
+ * cubes for collisions) but the movement is not natural at all
+ * (the sphere tends to glitch when moving while hugging a wall)
+
 		if (i != 0 && j != 0 && actual_maze_[x + i][y + j] == '#')
 			if (InRange((player_->x + offset.x), ((x + i) * cube_size_)) &&
 				InRange((player_->z + offset.z), ((y + j) * cube_size_))) {
@@ -153,6 +174,10 @@ void MazeGame::DetectCollisions(Float3 &offset) {
 					offset.z = 0;
 		}
 
+	// If the "portal" is reached we just spawn it
+	// somwhere else (we're devilishly intelligent!);
+	// Doing so will prevent our little ball from ever
+	// leaving the labyrinth! Mwahahahaha!
 	if (x == round(portal_->x / cube_size_) &&
 		y == round(portal_->z / cube_size_)) {
 			portal_->x = -1;
@@ -161,9 +186,10 @@ void MazeGame::DetectCollisions(Float3 &offset) {
 	}
 }
 
+// Places an object on a random free square on the map
 void MazeGame::PlaceRandObject(Float3 *obj) {
-	std::cout << "Placing rand obj\n";
-
+	// Since I use this only for the player and "portal"
+	// I have hardcoded the height
 	obj->y = 3.0 / 8 * cube_size_;
 
 	int i, j;
@@ -176,20 +202,20 @@ void MazeGame::PlaceRandObject(Float3 *obj) {
 			obj->z = j * cube_size_;
 		}
 	}
-
-	std::cout << obj->x / cube_size_ << " " << obj->z / cube_size_ << std::endl;
 }
 
+// Does what it says, pretty straightforward 
 void MazeGame::update_player_pos(Float3 offset) {
 	player_->x += offset.x;
 	player_->y += offset.y;
 	player_->z += offset.z;
 }
 
+// All the getters
 GLdouble MazeGame::maze_size() const { return this->maze_size_ * cube_size_; }
 
 Float3 MazeGame::player() const { return *player_; }
 
-const char* MazeGame::name() const { return this->name_; }
+const char* MazeGame::game_name() const { return this->game_name_; }
 
 int MazeGame::score() const { return this->score_; }

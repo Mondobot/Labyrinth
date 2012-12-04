@@ -48,7 +48,7 @@ void GlutEngine::Init(int argc, char *argv[]) {
 
 	glutInitWindowPosition(this->kWindowPosX, this->kWindowPosY);
 	glutInitWindowSize(this->kWindowSizeX, this->kWindowSizeY);
-	glutCreateWindow(game_->name());
+	glutCreateWindow(game_->game_name());
 
 	// Register callbacks
 	glutDisplayFunc(RenderScene);
@@ -195,7 +195,7 @@ void GlutEngine::PrintScore() {
 	out << "Score: " << game_->score();
 	std::string ceva = out.str();
 	
-	for (int i = 0; i < ceva.length(); ++i)
+	for (int i = 0; i < (int)ceva.length(); ++i)
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ceva[i]);
 
 	// Revert to the normal view

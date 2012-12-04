@@ -5,6 +5,7 @@
 #define MAZE_GAME_H_
 #include <GL/glut.h>
 #include <string>
+
 #include "float3.h"
 
 class MazeGame {
@@ -16,7 +17,8 @@ class MazeGame {
 		void RenderSelf();
 		void DetectCollisions(Float3 &delta_move);
 
-		const char* name() const;
+		// Getters and setters
+		const char* game_name() const;
 		GLdouble maze_size() const;
 		Float3 player() const;
 		int score() const;
@@ -27,13 +29,14 @@ class MazeGame {
 		void PlaceRandObject(Float3 *obj);
 		inline bool InRange(float a, float b);
 
-
 		char *input_file_;
+		static const char game_name_[];
+
 		char **actual_maze_;
 		int maze_size_;
 		static GLdouble fine_spacing_;
 		static GLdouble cube_size_;
-		static const char name_[];
+
 		static int score_;
 		static const float kMinDist;
 
