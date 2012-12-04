@@ -166,21 +166,7 @@ void GlutEngine::SetView() {
 	view_dir_angle_->y += delta_angle_->y;
 
 	delta_angle_->x = delta_angle_->y = delta_angle_->z = 0;
-/*
-//	if (camera_type == FIRST_PERSON) {
-	// TODO: Do something about these magic numbers!
-	// (or nothing, nothing's good too!)
-	if (view_dir_angle_->x > RAD(360)) {
-		view_dir_angle_->x -= RAD(360);
 
-	} else if (view_dir_angle_->y > RAD(-20)) {
-		view_dir_angle_->y = RAD(-20);
-
-	} else if (view_dir_angle_->y < RAD(80)) {
-		view_dir_angle_->y = RAD(80);
-	}
-//}
-*/
 	if (camera_->y < 0.3f)
 		camera_->y = 0.3f;
 

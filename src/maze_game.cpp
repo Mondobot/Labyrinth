@@ -123,35 +123,38 @@ bool MazeGame::InRange(float a, float b) {
 
 void MazeGame::DetectCollisions(Float3 &offset) {
 	// Check wall collisions
-	int i = round(player_->x / cube_size_);
-	int j = round(player_->z / cube_size_);
+	int x = round(player_->x / cube_size_);
+	int y = round(player_->z / cube_size_);
 
-	if (actual_maze_[i][j - 1] == '#') {
-		if (InRange((player_->z + offset.z), ((j - 1) * cube_size_)))
-			offset.z = 0;
-	}
+	for (int i = -1; i <= 1; ++i)
+		for (int j = -1; j <= 1; ++j) {
+			if (i == 0 && j == 0)
+				continue;
+/*
+		if (i != 0 && j != 0 && actual_maze_[x + i][y + j] == '#')
+			if (InRange((player_->x + offset.x), ((x + i) * cube_size_)) &&
+				InRange((player_->z + offset.z), ((y + j) * cube_size_))) {
+					offset.x = 0;
+					offset.z = 0;
+			}
+*/
 
-	if (actual_maze_[i][j + 1] == '#') {
-		if (InRange((player_->z + offset.z), ((j + 1) * cube_size_)))
-			offset.z = 0;
-	}
+			if (i != 0 && actual_maze_[x + i][y] == '#')
+				if (InRange((player_->x + offset.x),
+							((x + i) * cube_size_)))
+					offset.x = 0;
 
-	if (actual_maze_[i - 1][j] == '#') {
-		if (InRange((player_->x + offset.x), ((i - 1) * cube_size_)))
-			offset.x = 0;
-	}
+			if (j != 0 && actual_maze_[x][y + j] == '#')
+				if (InRange((player_->z + offset.z),
+							((y + j) * cube_size_)))
+					offset.z = 0;
+		}
 
-	if (actual_maze_[i + 1][j] == '#') {
-		if (InRange((player_->x + offset.x), ((i + 1) * cube_size_)))
-			offset.x = 0;
-	}
-
-	if (i == round(portal_->x / cube_size_) &&
-		j == round(portal_->z / cube_size_)) {
+	if (x == round(portal_->x / cube_size_) &&
+		y == round(portal_->z / cube_size_)) {
 			portal_->x = -1;
 			PlaceRandObject(portal_);
 	}
-
 }
 
 void MazeGame::PlaceRandObject(Float3 *obj) {
