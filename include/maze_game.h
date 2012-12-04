@@ -1,5 +1,5 @@
 /*
- * Includes go here.
+ * Main game class is here
  */
 #ifndef MAZE_GAME_H_
 #define MAZE_GAME_H_

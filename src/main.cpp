@@ -1,6 +1,3 @@
-/*
- * Includes go here:
- */
 #include <stdlib.h>
 #include <iostream>
 

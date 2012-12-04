@@ -10,5 +10,4 @@ class Float3 {
 	~Float3() {};
 	float x, y, z;
 };
-
 #endif //  _FLOAT3_H_
