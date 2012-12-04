@@ -7,6 +7,7 @@
 #define RAD(x) ((x) * PI / 180)
 #define WHEEL_DOWN 3
 #define WHEEL_UP 4
+#define PRECISION 0.00001f
 
 // TODO: ALL these initialisations look like crap, clean them!
 MazeGame * GlutEngine::game_ = NULL;
@@ -155,41 +156,44 @@ void GlutEngine::SetView() {
 	}
 
 
-//	std::cout << "gluLookAt: " << camera_->x << " " << camera_->y;
-//	std::cout << " " << camera_->z << " " << look_at.x << " ";
-//	std::cout << look_at.y << " " << look_at.z << " " << up.x;
-//	std::cout << " " << up.y << " " << up.z << std::endl;
+	std::cout << "gluLookAt: " << camera_->x << " " << camera_->y;
+	std::cout << " " << camera_->z << " " << look_at.x << " ";
+	std::cout << look_at.y << " " << look_at.z << " " << up.x;
+	std::cout << " " << up.y << " " << up.z << std::endl;
 
 
 	view_dir_angle_->x += delta_angle_->x;
 	view_dir_angle_->y += delta_angle_->y;
 
 	delta_angle_->x = delta_angle_->y = delta_angle_->z = 0;
-
+/*
 //	if (camera_type == FIRST_PERSON) {
 	// TODO: Do something about these magic numbers!
 	// (or nothing, nothing's good too!)
-	if (view_dir_angle_->x > 360) {
-		view_dir_angle_->x -= 360;
+	if (view_dir_angle_->x > RAD(360)) {
+		view_dir_angle_->x -= RAD(360);
 
-	} else if (view_dir_angle_->y < -20) {
-		view_dir_angle_->y = -20;
+	} else if (view_dir_angle_->y > RAD(-20)) {
+		view_dir_angle_->y = RAD(-20);
 
-	} else if (view_dir_angle_->y > 80) {
-		view_dir_angle_->y = 80;
+	} else if (view_dir_angle_->y < RAD(80)) {
+		view_dir_angle_->y = RAD(80);
 	}
 //}
+*/
+	if (camera_->y < 0.3f)
+		camera_->y = 0.3f;
 
 	gluLookAt(camera_->x, camera_->y, camera_->z,
 			look_at.x, look_at.y, look_at.z,
 			up.x, up.y, up.z);
 
-
-//	Float3 plr = game_->player();
-//	std::cout << "cam: " << camera_->x << " " << camera_->y << " " << camera_->z;
-//	std::cout << "\nplayer: " << plr.x << " " << plr.y << " ";
-//	std::cout << plr.z << std::endl;
-
+/*
+	Float3 plr = game_->player();
+	std::cout << "cam: " << camera_->x << " " << camera_->y << " " << camera_->z;
+	std::cout << "\nplayer: " << plr.x << " " << plr.y << " ";
+	std::cout << plr.z << std::endl;
+*/
 }
 
 void GlutEngine::KeyPress(unsigned char key, int x, int y) {
@@ -256,19 +260,16 @@ void GlutEngine::UpdatePos() {
 
 			//if (camera_dir_->z
 
-			offset.x += delta_move_->z *  //sin(view_dir_angle_->x +
-									//	delta_angle_->x - 90);// *
-									camera_dir_->z;
+			offset.x += delta_move_->z *  
+					sin(view_dir_angle_->x + delta_angle_->x - RAD(90)) *
+						sin(view_dir_angle_->y + delta_angle_->y);
 
-					//-cos(view_dir_angle_->x + delta_angle_->x + 90) *
-					//sin(view_dir_angle_->y + delta_angle_->y);
-			offset.z += delta_move_->z * //-cos(view_dir_angle_->x +
-									//	delta_angle_->x + 90); //*
-										camera_dir_->x;;
-									
-					//sin(view_dir_angle_->x + delta_angle_->x + 90) *
-					//sin(view_dir_angle_->y + delta_angle_->y);
-
+			offset.z += delta_move_->z * 
+					-cos(view_dir_angle_->x + delta_angle_->x - RAD(90)) *
+					sin(view_dir_angle_->y + delta_angle_->y);
+/*			std::cout << "Offset_x -> " << view_dir_angle_->x << " + " << delta_angle_->x << "\n";
+				std::cout << "Offset_y -> " << view_dir_angle_->y << " + " << delta_angle_->y << "\n";
+*/			
 			break;
 	}
 
@@ -322,7 +323,7 @@ void GlutEngine::MouseMove(int x, int y) {
 			camera_dir_->z = -cos(view_dir_angle_->x + delta_angle_->x) *
 							sin(view_dir_angle_->y + delta_angle_->y);
 			camera_dir_->y = cos(view_dir_angle_->y + delta_angle_->y);
-
+/*
 			// TODO: FIX the magic numbers
 			if (camera_dir_->x > 10)
 				camera_dir_->x -= 10;
@@ -332,6 +333,7 @@ void GlutEngine::MouseMove(int x, int y) {
 
 			if (camera_dir_->z > 10)
 				camera_dir_->z -= 10;
+*/
 
 			break;
 	}
@@ -339,11 +341,17 @@ void GlutEngine::MouseMove(int x, int y) {
 
 void GlutEngine::MouseClick(int button, int state, int x, int y) {
 	if (state == GLUT_DOWN) {
-		if (button == WHEEL_DOWN) {
+		if (button == WHEEL_DOWN && camera_type == THIRD_PERSON) {
 			zoom_factor_ -= 1.0f;
+
+			if (zoom_factor_ - 0 < PRECISION)
+				camera_type = FIRST_PERSON;
 
 		} else if (button == WHEEL_UP) {
 			zoom_factor_ += 1.0f;
+			
+			if (zoom_factor_ - 0 > PRECISION)
+				camera_type = THIRD_PERSON;
 		}
 	}
 }
